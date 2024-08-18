@@ -4,6 +4,7 @@ package io.github.et.conopt4j.logger;
 import io.github.et.conopt4j.exceptions.LevelNotMatchException;
 import io.github.et.conopt4j.exceptions.LoggerNotDeclaredException;
 import io.github.et.conopt4j.exceptions.RepeatedLoggerDeclarationException;
+import io.github.et.conopt4j.style.Color;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,23 +22,18 @@ import static io.github.et.conopt4j.launcher.streams.Out.OUT;
  */
 @SuppressWarnings(value={"unused"})
 public class Logger{
-
-    /**
-     * The levels contain Levels.INFO, Levels.DEBUG and Levels.SEVERE <br/>
-     * For Levels.INFO, you can call: info(), error(), fatal() <br/>
-     * For Levels.DEBUG, you can call: info(), error(), fatal(), debug(), severe(), fine() <br/>
-     * For Levels.SEVERE, you can call: info(), error(), fatal(), severe(), fine() <br/>
-     * If you call the functions that does not match the level you have declared, a LevelNotMatchException will be thrown
-     * @author Enderman-Teleporting
-     */
-    public enum Levels{
-        INFO,DEBUG,SEVERE
-    }
+    private static final String RESET = "\033[0m";
     public static Logger log;
-    private static Levels level=Levels.INFO;
-    private static final String format="[%s] %s ----------------- %s %n";
+    private static Level level= Level.INFO;
+    private static final String format="%s[%s] %s --------- %s%s %n";
     private static String fileOutPut=null;
     public static boolean declared=false;
+    private static Color info=Color.WHITE;
+    private static Color error=Color.RED;
+    private static Color fatal=Color.RED;
+    private static Color debug=Color.CYAN;
+    private static Color fine=Color.WHITE;
+    private static Color severe=Color.WHITE;
 
     private static final SimpleDateFormat fmt=new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
 
@@ -66,11 +62,11 @@ public class Logger{
     /**
      * A constructor with params <br/>
      * @author Enderman-Teleporting
-     * @param level (String) -> Logger level (containing Levels.INFO, Levels.DEBUG and Levels.SEVERE)
+     * @param level (String) -> Logger level (containing Level.INFO, Level.DEBUG and Level.FINE)
      * @param fileOutput (String) -> The path for a log file that you may want to record the logs in
      * @throws RepeatedLoggerDeclarationException -> Called when a Logger has already been declared
      */
-    public Logger(Levels level,String fileOutput) throws RepeatedLoggerDeclarationException {
+    public Logger(Level level, String fileOutput) throws RepeatedLoggerDeclarationException {
         try {
             if (Logger.fileOutPut.isEmpty()) {
                 Logger.fileOutPut = null;
@@ -89,10 +85,10 @@ public class Logger{
     /**
      * A constructor with params <br/>
      * @author Enderman-Teleporting
-     * @param level (String) -> Logger level (containing Levels.INFO, Levels.DEBUG and Levels.SEVERE)
+     * @param level (String) -> Logger level (containing Level.INFO, Level.DEBUG and Level.FINE)
      * @throws RepeatedLoggerDeclarationException -> Called when a Logger has already been declared
      */
-    public Logger(Levels level) throws RepeatedLoggerDeclarationException {
+    public Logger(Level level) throws RepeatedLoggerDeclarationException {
         try {
             if (Logger.fileOutPut.isEmpty()) {
                 Logger.fileOutPut = null;
@@ -134,7 +130,7 @@ public class Logger{
      * @author Enderman-Teleporting
      * @param level (Logger.Level) -> Logger level
      */
-    public void setLevel(Levels level){Logger.level =level;}
+    public void setLevel(Level level){Logger.level =level;}
 
     /**
      * A function to set the log output file <br/>
@@ -161,7 +157,7 @@ public class Logger{
         Date date=new Date(System.currentTimeMillis());
         for (String cnt:contents){
             String s=String.format(cnt, f);
-            OUT.printf(format,"INFO",fmt.format(date),s);
+            OUT.printf(format,info.toString(),"INFO",fmt.format(date),s,RESET);
             if(fileOutPut!=null){
                 File file=new File(fileOutPut);
                 if(!file.exists()){
@@ -172,7 +168,7 @@ public class Logger{
                     }
 
                 }
-                str=String.format(format,"INFO",fmt.format(date),s);
+                str=String.format(format,info.toString(),"INFO",fmt.format(date),s,RESET);
                 try {
                     FileOutputStream bw=new FileOutputStream(file,true);
                     bw.write(str.getBytes());
@@ -204,7 +200,7 @@ public class Logger{
         Date date=new Date(System.currentTimeMillis());
         for (String cnt:contents) {
             String s=String.format(cnt, f);
-            ERR.printf(format, "ERROR",fmt.format(date) , s);
+            ERR.printf(format,error.toString(), "ERROR",fmt.format(date) , s,RESET);
             if(fileOutPut!=null){
                 File file=new File(fileOutPut);
                 if(!file.exists()){
@@ -215,7 +211,7 @@ public class Logger{
                     }
 
                 }
-                str=String.format(format,"ERROR",fmt.format(date),s);
+                str=String.format(format,error.toString(), "ERROR",fmt.format(date) , s,RESET);
                 try {
                     FileOutputStream bw=new FileOutputStream(file,true);
                     bw.write(str.getBytes());
@@ -245,7 +241,7 @@ public class Logger{
         Date date=new Date(System.currentTimeMillis());
         for (String cnt:contents) {
             String s=String.format(cnt, f);
-            ERR.printf(format, "FATAL",fmt.format(date) , s);
+            ERR.printf(format,fatal.toString(), "FATAL",fmt.format(date) , s,RESET);
             if(fileOutPut!=null){
                 File file=new File(fileOutPut);
                 if(!file.exists()){
@@ -256,7 +252,7 @@ public class Logger{
                     }
 
                 }
-                str=String.format(format,"FATAL",fmt.format(date),s);
+                str=String.format(format,fatal.toString(), "FATAL",fmt.format(date) , s,RESET);
                 try {
                     FileOutputStream bw=new FileOutputStream(file,true);
                     bw.write(str.getBytes());
@@ -274,10 +270,10 @@ public class Logger{
      * @author Enderman-Teleporting
      * @param content (String) -> Log content
      * @param f (Object...) -> Log format
-     * @throws LevelNotMatchException -> Called when your level is not Levels.DEBUG
+     * @throws LevelNotMatchException -> Called when your level is not Level.DEBUG
      */
     public void debug(String content, Object ...f) throws LevelNotMatchException {
-        if(Logger.level.equals(Levels.DEBUG)){
+        if(Logger.level.equals(Level.DEBUG)){
             String str;
             String[] contents;
             if (content.contains("\n")){
@@ -288,7 +284,7 @@ public class Logger{
             Date date=new Date(System.currentTimeMillis());
             for (String cnt:contents){
                 String s=String.format(cnt, f);
-                OUT.printf(format,"DEBUG",fmt.format(date),s);
+                OUT.printf(format,debug.toString(),"DEBUG",fmt.format(date),s,RESET);
                 if(fileOutPut!=null){
                     File file=new File(fileOutPut);
                     if(!file.exists()){
@@ -299,7 +295,7 @@ public class Logger{
                         }
 
                     }
-                    str=String.format(format,"DEBUG",fmt.format(date),s);
+                    str=String.format(format,debug.toString(),"DEBUG",fmt.format(date),s,RESET);
                     try {
                         FileOutputStream bw=new FileOutputStream(file,true);
                         bw.write(str.getBytes());
@@ -316,14 +312,14 @@ public class Logger{
     }
 
     /**
-     * The [SEVERE] log output <br/>
+     * The [FINE] log output <br/>
      * @author Enderman-Teleporting
      * @param content (String) -> Log content
      * @param f (Object...) -> Log format
-     * @throws LevelNotMatchException -> Called when your level is not Levels.DEBUG or Levels.SEVERE
+     * @throws LevelNotMatchException -> Called when your level is not Level.DEBUG or Level.FINE
      */
     public void severe(String content,Object...f) throws LevelNotMatchException {
-        if(Logger.level.equals(Levels.DEBUG)||Logger.level.equals(Levels.SEVERE)){
+        if(Logger.level.equals(Level.DEBUG)||Logger.level.equals(Level.FINE)){
             String str;
             String[] contents;
             if (content.contains("\n")){
@@ -334,7 +330,7 @@ public class Logger{
             Date date=new Date(System.currentTimeMillis());
             for (String cnt:contents){
                 String s=String.format(cnt, f);
-                ERR.printf(format,"SEVERE",fmt.format(date),s);
+                ERR.printf(format,severe.toString(),"SEVERE",fmt.format(date),s,RESET);
                 if(fileOutPut!=null){
                     File file=new File(fileOutPut);
                     if(!file.exists()){
@@ -345,7 +341,7 @@ public class Logger{
                         }
 
                     }
-                    str=String.format(format,"SEVERE",fmt.format(date),s);
+                    str=String.format(format,severe.toString(),"SEVERE",fmt.format(date),s,RESET);
                     try {
                         FileOutputStream bw=new FileOutputStream(file,true);
                         bw.write(str.getBytes());
@@ -366,11 +362,11 @@ public class Logger{
      * @author Enderman-Teleporting
      * @param content (String) -> Log content
      * @param f (Object...) -> Log format
-     * @throws LevelNotMatchException -> Called when your level is not Levels.DEBUG or Levels.SEVERE
+     * @throws LevelNotMatchException -> Called when your level is not Level.DEBUG or Level.FINE
      */
     public void fine(String content,Object...f) throws LevelNotMatchException {
         String str;
-        if (Logger.level.equals(Levels.SEVERE)||Logger.level.equals(Levels.DEBUG)){
+        if (Logger.level.equals(Level.FINE)||Logger.level.equals(Level.DEBUG)){
             String[] contents;
             if (content.contains("\n")){
                 contents=content.split("\n");
@@ -380,7 +376,7 @@ public class Logger{
             Date date=new Date(System.currentTimeMillis());
             for (String cnt:contents){
                 String s=String.format(cnt, f);
-                OUT.printf(format,"FINE",fmt.format(date),s);
+                OUT.printf(format,fine.toString(),"FINE",fmt.format(date),s,RESET);
                 if(fileOutPut!=null){
                     File file=new File(fileOutPut);
                     if(!file.exists()){
@@ -391,7 +387,7 @@ public class Logger{
                         }
 
                     }
-                    str=String.format(format,"FINE",fmt.format(date),s);
+                    str=String.format(format,fine.toString(),"FINE",fmt.format(date),s,RESET);
                     try {
                         FileOutputStream bw=new FileOutputStream(file,true);
                         bw.write(str.getBytes());
@@ -411,29 +407,7 @@ public class Logger{
      * @author Enderman-Teleporting
      */
     public void info(){
-        String str;
-        Date date=new Date(System.currentTimeMillis());
-        OUT.printf(format, "INFO",fmt.format(date),"");
-        if(fileOutPut != null){
-            File file=new File(fileOutPut);
-            if(!file.exists()){
-                try {
-                    boolean bo=file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            str=String.format(format,"INFO",fmt.format(date),"");
-            try {
-                FileOutputStream bw=new FileOutputStream(file,true);
-                bw.write(str.getBytes());
-                bw.flush();
-                bw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        info("");
     }
 
     /**
@@ -441,29 +415,7 @@ public class Logger{
      * @author Enderman-Teleporting
      */
     public void error(){
-        String str;
-        Date date=new Date(System.currentTimeMillis());
-        ERR.printf(format, "ERROR",fmt.format(date),"");
-        if(fileOutPut != null){
-            File file=new File(fileOutPut);
-            if(!file.exists()){
-                try {
-                    boolean bo=file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            str=String.format(format,"ERROR",fmt.format(date),"");
-            try {
-                FileOutputStream bw=new FileOutputStream(file,true);
-                bw.write(str.getBytes());
-                bw.flush();
-                bw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        error("");
     }
 
     /**
@@ -471,134 +423,34 @@ public class Logger{
      * @author Enderman-Teleporting
      */
     public void fatal(){
-        String str;
-        Date date=new Date(System.currentTimeMillis());
-        ERR.printf(format, "FATAL",fmt.format(date),"");
-        if(fileOutPut != null){
-            File file=new File(fileOutPut);
-            if(!file.exists()){
-                try {
-                    boolean bo=file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            str=String.format(format,"FATAL",fmt.format(date),"");
-            try {
-                FileOutputStream bw=new FileOutputStream(file,true);
-                bw.write(str.getBytes());
-                bw.flush();
-                bw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        fatal("");
     }
 
     /**
      * The blank [FINE] log output <br/>
      * @author Enderman-Teleporting
-     * @throws LevelNotMatchException -> Called when your level is not Levels.DEBUG or Levels.SEVERE
+     * @throws LevelNotMatchException -> Called when your level is not Level.DEBUG or Level.FINE
      */
     public void fine() throws LevelNotMatchException {
-        if (Logger.level.equals(Levels.SEVERE)||Logger.level.equals(Levels.DEBUG)){
-            String str;
-            Date date=new Date(System.currentTimeMillis());
-            OUT.printf(format,"FINE",fmt.format(date),"");
-            if(fileOutPut != null){
-                File file=new File(fileOutPut);
-                if(!file.exists()){
-                    try {
-                        boolean bo=file.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                str=String.format(format,"FINE",fmt.format(date),"");
-                try {
-                    FileOutputStream bw=new FileOutputStream(file,true);
-                    bw.write(str.getBytes());
-                    bw.flush();
-                    bw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }else{
-            throw new LevelNotMatchException("The current level is "+level+", which is lower than needed");
-        }
+        fine("");
     }
 
     /**
-     * The blank [SEVERE] log output <br/>
+     * The blank [FINE] log output <br/>
      * @author Enderman-Teleporting
-     * @throws LevelNotMatchException -> Called when your level is not Levels.DEBUG or Levels.SEVERE
+     * @throws LevelNotMatchException -> Called when your level is not Level.DEBUG or Level.FINE
      */
     public void severe() throws LevelNotMatchException {
-        if (Logger.level.equals(Levels.SEVERE)||Logger.level.equals(Levels.DEBUG)){
-            String str;
-            Date date=new Date(System.currentTimeMillis());
-            ERR.printf(format,"SEVERE",fmt.format(date),"");
-            if(fileOutPut != null){
-                File file=new File(fileOutPut);
-                if(!file.exists()){
-                    try {
-                        boolean bo=file.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                str=String.format(format,"SEVERE",fmt.format(date),"");
-                try {
-                    FileOutputStream bw=new FileOutputStream(file,true);
-                    bw.write(str.getBytes());
-                    bw.flush();
-                    bw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }else{
-            throw new LevelNotMatchException("The current level is "+level+", which is lower than needed");
-        }
+        severe("");
     }
 
     /**
      * The blank [DEBUG] log output <br/>
      * @author Enderman-Teleporting
-     * @throws LevelNotMatchException -> Called when your level is not Levels.DEBUG
+     * @throws LevelNotMatchException -> Called when your level is not Level.DEBUG
      */
     public void debug() throws LevelNotMatchException {
-        if (Logger.level.equals(Levels.DEBUG)){
-            String str;
-            Date date=new Date(System.currentTimeMillis());
-            OUT.printf(format,"DEBUG",fmt.format(date),"");
-            if(fileOutPut != null){
-                File file=new File(fileOutPut);
-                if(!file.exists()){
-                    try {
-                        boolean bo=file.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                str=String.format(format,"DEBUG",fmt.format(date),"");
-                try {
-                    FileOutputStream bw=new FileOutputStream(file,true);
-                    bw.write(str.getBytes());
-                    bw.flush();
-                    bw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }else{
-            throw new LevelNotMatchException("The current level is "+level+", which is lower than needed");
-        }
+        debug("");
     }
 
 
