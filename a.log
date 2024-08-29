@@ -1,0 +1,15 @@
+[ INFO ] 2024-08-29 at 15:10:04 CST --io.github.et.conopt4j.Main--  
+[ INFO ] 2024-08-29 at 15:10:04 CST --io.github.et.conopt4j.streams.Out-- Hello 
+[ INFO ] 2024-08-29 at 15:10:04 CST --io.github.et.conopt4j.Main-- World Hello 
+[ ERROR ] 2024-08-29 at 15:10:04 CST --io.github.et.conopt4j.Main-- World java.lang.Exception: Test 
+[ ERROR ] 2024-08-29 at 15:10:04 CST --io.github.et.conopt4j.streams.Err-- 	at io.github.et.conopt4j.Main.main(Main.java:14) 
+[ INFO ] 2024-08-29 at 15:11:56 CST --io.github.et.conopt4j.Main--  
+[ INFO ] 2024-08-29 at 15:11:56 CST --io.github.et.conopt4j.streams.Out-- Hello 
+[ INFO ] 2024-08-29 at 15:11:56 CST --io.github.et.conopt4j.Main-- World Hello 
+[ ERROR ] 2024-08-29 at 15:11:56 CST --io.github.et.conopt4j.Main-- World java.lang.Exception: Test 
+[ ERROR ] 2024-08-29 at 15:11:56 CST --io.github.et.conopt4j.streams.Err-- 	at io.github.et.conopt4j.Main.main(Main.java:14) 
+[ INFO ] 2024-08-29 at 15:12:00 CST --io.github.et.conopt4j.Main--  
+[ INFO ] 2024-08-29 at 15:12:00 CST --io.github.et.conopt4j.streams.Out-- Hello 
+[ INFO ] 2024-08-29 at 15:12:00 CST --io.github.et.conopt4j.Main-- World Hello 
+[ ERROR ] 2024-08-29 at 15:12:00 CST --io.github.et.conopt4j.Main-- World java.lang.Exception: Test 
+[ ERROR ] 2024-08-29 at 15:12:00 CST --io.github.et.conopt4j.streams.Err-- 	at io.github.et.conopt4j.Main.main(Main.java:14) 

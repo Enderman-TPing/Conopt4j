@@ -1,18 +1,17 @@
 package io.github.et.conopt4j.launcher;
 
-import io.github.et.conopt4j.exceptions.RepeatedLoggerDeclarationException;
-import io.github.et.conopt4j.launcher.streams.Err;
-import io.github.et.conopt4j.launcher.streams.Out;
-import io.github.et.conopt4j.logger.Logger;
+import io.github.et.conopt4j.streams.Err;
+import io.github.et.conopt4j.streams.Out;
+import org.fusesource.jansi.AnsiConsole;
 
 public class Launcher {
-    public static Logger launch() throws RepeatedLoggerDeclarationException {
+    public static boolean isAnsiInstalled=false;
+    public static void init() {
+        if(!isAnsiInstalled){
+            AnsiConsole.systemInstall();
+            isAnsiInstalled = true;
+        }
         Out.initialize();
         Err.initialize();
-        try {
-            return Logger.getDeclaredLogger();
-        }catch (Exception ignored){
-            return null;
-        }
     }
 }
