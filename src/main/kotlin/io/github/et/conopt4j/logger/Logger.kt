@@ -2,13 +2,11 @@ package io.github.et.conopt4j.logger
 
 import io.github.et.conopt4j.exceptions.LevelNotMatchException
 import io.github.et.conopt4j.exceptions.RepeatedLoggerDeclarationException
-import io.github.et.conopt4j.launcher.Launcher.isAnsiInstalled
 import io.github.et.conopt4j.launcher.PropertyLoader
 import io.github.et.conopt4j.streams.Err
 import io.github.et.conopt4j.streams.LineProcessor
 import io.github.et.conopt4j.streams.Out
 import io.github.et.conopt4j.style.Color
-import org.fusesource.jansi.AnsiConsole
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -28,10 +26,6 @@ class Logger {
     init {
         if (declared) {
             throw RepeatedLoggerDeclarationException("One Logger has already been declared")
-        }
-        if(!isAnsiInstalled){
-            AnsiConsole.systemInstall()
-            isAnsiInstalled = true
         }
         log=this
         declared = true
@@ -179,7 +173,7 @@ class Logger {
             val formattedContent = String.format(cnt, *f)
             val output = String.format(format, color, logLevel, fmt.format(date), caller(),formattedContent,"\n")
             sb.append(output)
-            Out.OUT.printf(output)
+            (output)
         }
 
         if (fileOutPut != null) {
