@@ -4,11 +4,8 @@ import io.github.et.conopt4j.logger.Level;
 import io.github.et.conopt4j.streams.Err;
 import io.github.et.conopt4j.style.Color;
 import io.github.et.conopt4j.style.Style;
-import io.github.et.conopt4j.style.Style_headless;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Properties;
 
 /**
@@ -25,8 +22,11 @@ import java.util.Properties;
  * conopt4j.logger.fatal = Color.PURPLE
  * conopt4j.logger.severe = Color.RED
  * conopt4j.logger.fine = Color.BLUE
+ * conopt4j.logger.useTrace = true
+ * conopt4j.logger.useDate = true
+ * conopt4j.logger.maxHistory = 1024
+ * conopt4j.command.prompt = >
  * conopt4j.logger.output = a.log
- * conopt4j.monitor.interval = 500
  * }
  * </pre>
  * </p>
@@ -37,7 +37,6 @@ import java.util.Properties;
  */
 public class PropertyLoader {
     private static Style format=Style.HINT;
-    private static Style_headless format_headless=Style_headless.HINT;
     private static Level level=Level.INFO;
     private static Color info=Color.WHITE;
     private static Color warn=Color.WHITE;
@@ -46,17 +45,15 @@ public class PropertyLoader {
     private static Color fatal=Color.WHITE;
     private static Color severe=Color.WHITE;
     private static Color fine=Color.WHITE;
+    private static boolean useDate=true;
+    private static boolean useTrace=true;
+    private static int maxHistory=1024;
+    private static String prompt = ">";
     private static String logOutPut=null;
     private static final Properties properties = new Properties();
-    private static long interval=500;
 
     public static Style getFormat() {
         return format;
-    }
-
-
-    public static Style_headless getFormat_headless() {
-        return format_headless;
     }
 
     public static Level getLevel() {
@@ -95,6 +92,14 @@ public class PropertyLoader {
         return logOutPut;
     }
 
+    public static int getMaxHistory() {return maxHistory;}
+
+    public static String getPrompt() {return prompt;}
+
+    public static boolean isUseDate() {return useDate;}
+
+    public static boolean isUseTrace() {return useTrace;}
+
     public static void loadProperties(InputStream in){
         try{
             properties.load(in);
@@ -103,7 +108,6 @@ public class PropertyLoader {
             return;
         }
         format=properties.getProperty("conopt4j.logger.format","Style.HINT").equals("Style.ALL")?Style.ALL:Style.HINT;
-        format_headless=properties.getProperty("conopt4j.logger.format","Style.HINT").equals("Style.ALL")?Style_headless.ALL:Style_headless.HINT;
         String tmp=properties.getProperty("conopt4j.logger.level","Level.INFO");
         if(tmp.equals("Level.DEBUG")){
             level=Level.DEBUG;
@@ -119,11 +123,18 @@ public class PropertyLoader {
         debug = getColor("debug");
         severe = getColor("severe");
         fine = getColor("fine");
+
         tmp=properties.getProperty("conopt4j.logger.output","");
         logOutPut= tmp.isEmpty() ?null:tmp;
         try {
-            interval = Long.parseLong(properties.getProperty("conopt4j.monitor.interval", "500"));
+            maxHistory = Integer.parseInt(properties.getProperty("conopt4j.logger.maxHistory"));
+            prompt = properties.getProperty("conopt4j.command.prompt");
+            useDate=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useDate"));
+            useTrace=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useTrace"));
         }catch (Exception ignored){}
+        if(maxHistory<=64){
+            throw new IllegalArgumentException("comopt4j.logger.maxHistory must be at least 64");
+        }
 
     }
     private static Color getColor(String level){
@@ -139,7 +150,4 @@ public class PropertyLoader {
         };
     }
 
-    public static long getInterval() {
-        return interval;
-    }
 }
