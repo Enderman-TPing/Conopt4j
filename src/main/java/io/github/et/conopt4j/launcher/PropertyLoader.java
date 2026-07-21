@@ -3,7 +3,6 @@ package io.github.et.conopt4j.launcher;
 import io.github.et.conopt4j.logger.Level;
 import io.github.et.conopt4j.streams.Err;
 import io.github.et.conopt4j.style.Color;
-import io.github.et.conopt4j.style.Style;
 
 import java.io.InputStream;
 import java.util.Properties;
@@ -13,7 +12,6 @@ import java.util.Properties;
  * <p>
  * <pre>
  * {@code
- * conopt4j.logger.format = Style.HINT
  * conopt4j.logger.level = Level.DEBUG
  * conopt4j.logger.info = Color.WHITE
  * conopt4j.logger.warn = Color.YELLOW
@@ -38,7 +36,6 @@ import java.util.Properties;
  * @author Enderman-TPing
  */
 public class PropertyLoader {
-    private static Style format=Style.HINT;
     private static Level level=Level.INFO;
     private static Color info=Color.WHITE;
     private static Color warn=Color.WHITE;
@@ -55,10 +52,7 @@ public class PropertyLoader {
     private static String logOutPut=null;
     private static long interval=500;
     private static final Properties properties = new Properties();
-
-    public static Style getFormat() {
-        return format;
-    }
+    
 
     public static Level getLevel() {
         return level;
@@ -113,7 +107,6 @@ public class PropertyLoader {
             Err.ERR.println("Load config file error! Using default values");
             return;
         }
-        format=properties.getProperty("conopt4j.logger.format","Style.HINT").equals("Style.ALL")?Style.ALL:Style.HINT;
         String tmp=properties.getProperty("conopt4j.logger.level","Level.INFO");
         if(tmp.equals("Level.DEBUG")){
             level=Level.DEBUG;
