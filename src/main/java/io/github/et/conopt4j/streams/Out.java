@@ -6,10 +6,10 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 public class Out extends PrintStream {
-    public static final PrintStream OUT = System.out;
+    public static final PrintStream OUT = new OldOut(System.out);
 
     private Out(OutputStream out) {
-        super(out);
+        super(System.out);
     }
 
     public static String buffer = "";

@@ -1,21 +1,15 @@
 package io.github.et.conopt4j.streams;
 
+import io.github.et.conopt4j.launcher.Launcher;
 import io.github.et.conopt4j.logger.Logger;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class Err extends PrintStream {
-    public static final PrintStream ERR = new OldErr(System.err);
-
-    private Err(OutputStream out) {
+public class OldOut extends PrintStream {
+    public OldOut(OutputStream out) {
         super(out);
     }
-
-    public static void initialize() {
-        System.setErr(new Err(System.err));
-    }
-
 
     public void print() {
         print0("");
@@ -128,31 +122,31 @@ public class Err extends PrintStream {
 
 
     private void println0(String x) {
-        Logger.error(x);
+        Launcher.READER.printAbove(x);
+        Logger.getLogHistory().add(x);
     }
 
     private void print0(String x) {
-        if(x.endsWith("\n")) {
-            println0(x);
-            return;
-        }
-        String[] contents = x.split("\\r\\n|(?<!\\r\\n)\\n(?!\\r\\n)|(?<!\\r\\n|\\n)\\r(?!\\r\\n|\\n)");
-        StringBuilder sb = new StringBuilder();
-        if (contents.length > 1) {
-            for (int i = 0; i < contents.length - 1; i++) {
-                Logger.error(contents[i]);
+        synchronized (Launcher.getStatusList()) {
+            if (x.endsWith("\n")) {
+                println0(x);
+                return;
             }
-            Out.buffer=contents[contents.length - 1];
-        } else {
-            Out.buffer += contents[0];
+            String[] contents = x.split("\\r\\n|(?<!\\r\\n)\\n(?!\\r\\n)|(?<!\\r\\n|\\n)\\r(?!\\r\\n|\\n)");
+            if (contents.length > 1) {
+                for (int i = 0; i < contents.length - 1; i++) {
+                    println0(contents[i]);
+                }
+                Out.buffer = contents[contents.length - 1];
+            } else {
+                Out.buffer = Out.buffer + contents[0];
+            }
         }
     }
-
     private void printf0(String x, Object... f) {
         String a = String.format(x, f);
         print(a.replace("\r\n", "\n"));
     }
 
-
-
 }
+

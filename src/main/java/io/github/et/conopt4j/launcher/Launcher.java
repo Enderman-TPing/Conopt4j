@@ -8,28 +8,28 @@ import io.github.et.conopt4j.threading.command.Command;
 import io.github.et.conopt4j.threading.command.Context;
 import io.github.et.conopt4j.threading.command.Parameter;
 import io.github.et.conopt4j.threading.command.Type;
+import io.github.et.conopt4j.threading.monitor.Monitor;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
-import sun.misc.Signal;
+import org.jline.utils.Status;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
+import java.util.concurrent.*;
 import java.util.function.Function;
 
 public class Launcher {
+    public static Status status;
     public static Terminal TERMINAL;
     public static LineReader READER;
     private static ExecutorService threadPool = Executors.newCachedThreadPool(new ThreadingFactory());
-    private static ExecutorService threadPool0 = Executors.newCachedThreadPool();
+    private static ThreadPoolExecutor threadPool0 = (ThreadPoolExecutor) Executors.newCachedThreadPool();
     private static Map<String, Command> commands = new HashMap<>();
 
     public static Map<String,Command> getCommands() {
@@ -48,6 +48,12 @@ public class Launcher {
         commands.put(cmd.getName(), cmd);
     }
 
+    private static final List<AttributedString> statusList=new ArrayList<>();
+
+    public static List<AttributedString> getStatusList() {
+        return statusList;
+    }
+
     public static void init(InputStream in) throws IOException {
         PropertyLoader.loadProperties(in);
         TERMINAL = TerminalBuilder.builder().system(true).build();
@@ -56,6 +62,9 @@ public class Launcher {
                 .build();
         Out.initialize();
         Err.initialize();
+        threadPool0.setKeepAliveTime(1, TimeUnit.SECONDS);
+        threadPool0.allowCoreThreadTimeOut(true);
+        status = new Status(TERMINAL);
         Thread main=null;
         Thread thread = new Thread(() -> {
             while (true) {
@@ -106,12 +115,39 @@ public class Launcher {
             }
         }
         thread.start();
-        Thread finalThread = thread;
         Thread finalMain = main;
+        Thread thread0;
+        if(PropertyLoader.useMonitor()){
+             thread0= new Thread(() -> {
+                 try {
+                     while (true) {
+                         synchronized (statusList) {
+                             Monitor.getMonitor();
+                             status.update(Collections.emptyList());
+                             status.update(statusList);
+                         }
+                         Thread.sleep(PropertyLoader.getInterval());
+                     }
+                 }catch(InterruptedException e){
+                     Thread.currentThread().interrupt();
+                     status.close();
+                 }
+            });
+             thread0.setDaemon(true);
+             thread0.start();
+        } else {
+            thread0 = null;
+        }
         threadPool.execute(() -> {
             while(true) {
-                if(!finalThread.isAlive()){
+                if((!thread.isAlive())||(!finalMain.isAlive())){
                     finalMain.interrupt();
+                    if(!(thread0 ==null)){
+                        thread0.interrupt();
+                    }
+                    threadPool.shutdownNow();
+                    status.close();
+                    break;
                 }
             }
         });
@@ -145,7 +181,9 @@ public class Launcher {
                                   if (pos < i.length()) {
                                       sb.append(i.substring(pos), AttributedStyle.DEFAULT);
                                   }
-                                  READER.printAbove(sb.toAttributedString());
+                                  synchronized (statusList) {
+                                      READER.printAbove(sb.toAttributedString());
+                                  }
                               }
                               return "";
                           }).build();
@@ -153,9 +191,7 @@ public class Launcher {
             Command help=new Command("help");
             help.setDeamon(true).setDescription("Show help")
                     .addParameterNode()
-                        .addExecution(context -> {
-                            return buildHelp();
-                        })
+                        .addExecution(context -> buildHelp())
                     .addParameterNode(new Parameter<>("commandName", Type.STRING))
                         .addExecution(context -> {
                             String commandName=context.get("commandName");

@@ -11,7 +11,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 
 
 /**
@@ -185,48 +186,50 @@ public class Logger {
     }
 
     private static void log(String content, Color color, String logLevel, Object... f) {
-        String content0 = String.format(content, f);
-        String[] contents = content0.contains("\n") ? (content0.split("\n")) : new String[]{content0};
-        if (Out.buffer.equals("")) {
-            Date date = new Date();
-            StringBuilder all = new StringBuilder();
-            for (String cnt : contents) {
-                AttributedStringBuilder sb = new AttributedStringBuilder();
-                sb.append("[");
-                sb.style(color.getStyle());
-                sb.append(logLevel);
-                sb.style(AttributedStyle.DEFAULT);
-                sb.append("] ");
-                if (PropertyLoader.isUseDate()) {
-                    sb.append(fmt.format(date));
-                    sb.append(" ");
-                }
-                if (PropertyLoader.isUseTrace()) {
-                    sb.style(AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
-                    sb.append("--");
-                    sb.append(caller());
-                    sb.append("--");
+        synchronized (Launcher.getStatusList()) {
+            String content0 = String.format(content, f);
+            String[] contents = content0.contains("\n") ? (content0.split("\n")) : new String[]{content0};
+            if (Out.buffer.equals("")) {
+                Date date = new Date();
+                StringBuilder all = new StringBuilder();
+                for (String cnt : contents) {
+                    AttributedStringBuilder sb = new AttributedStringBuilder();
+                    sb.append("[");
+                    sb.style(color.getStyle());
+                    sb.append(logLevel);
                     sb.style(AttributedStyle.DEFAULT);
+                    sb.append("] ");
+                    if (PropertyLoader.isUseDate()) {
+                        sb.append(fmt.format(date));
+                        sb.append(" ");
+                    }
+                    if (PropertyLoader.isUseTrace()) {
+                        sb.style(AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
+                        sb.append("--");
+                        sb.append(caller());
+                        sb.append("--");
+                        sb.style(AttributedStyle.DEFAULT);
+                    }
+                    sb.append(" ");
+                    sb.append(cnt);
+                    all.append(sb.toString()).append("\n");
+                    logHistory.add(sb.toString());
+                    Launcher.READER.printAbove(sb.toAttributedString());
                 }
-                sb.append(" ");
-                sb.append(cnt);
-                all.append(sb.toString()).append("\n");
-                logHistory.add(sb.toString());
-                Launcher.READER.printAbove(sb.toAttributedString());
-            }
-            if (fileOutPut != null) {
-                writeToFile(all.toString());
-            }
-        } else {
-            contents[0] = Out.buffer + contents[0];
-            Out.buffer = "";
-            for (int i = 0; i < contents.length; i++) {
-                log(contents[i], color, logLevel);
-            }
+                if (fileOutPut != null) {
+                    writeToFile(all.toString());
+                }
+            } else {
+                contents[0] = Out.buffer + contents[0];
+                Out.buffer = "";
+                for (int i = 0; i < contents.length; i++) {
+                    log(contents[i], color, logLevel);
+                }
 
-        }
-        if (logHistory.size() > PropertyLoader.getMaxHistory()) {
-            logHistory.remove(0);
+            }
+            if (logHistory.size() > PropertyLoader.getMaxHistory()) {
+                logHistory.remove(0);
+            }
         }
     }
 
@@ -240,7 +243,6 @@ public class Logger {
             FileOutputStream fos = new FileOutputStream(file, true);
             fos.write(content.getBytes());
             fos.flush();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -267,6 +269,10 @@ public class Logger {
 
     public static ArrayList<String> getLogHistory() {
         return logHistory;
+    }
+
+    public static void setFileOutPut(String fileOutPut) {
+        Logger.fileOutPut = fileOutPut;
     }
 
 }

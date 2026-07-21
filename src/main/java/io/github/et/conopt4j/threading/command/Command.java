@@ -1,14 +1,13 @@
 package io.github.et.conopt4j.threading.command;
 
 import io.github.et.conopt4j.launcher.Launcher;
-import io.github.et.conopt4j.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 
@@ -57,13 +56,13 @@ public class Command{
         return this;
     }
     public void build(){}
-    public static String runCommand(String line){
+    public static CompletableFuture<String> runCommand(String line){
         List<String> rawTokens = splitCommand(line);
         String cmdName = rawTokens.get(0);
         List<String> argsTokens = rawTokens.subList(1, rawTokens.size());
         Command cmd = Launcher.getCommands().get(cmdName);
         if (cmd == null) {
-            return ("Unknown command: " + cmdName);
+            return CompletableFuture.completedFuture("Unknown command: " + cmdName);
         }
         for (Map.Entry<List<Parameter<?>>, Function<Context, String>> entry : cmd.getParameterNodeSet().entrySet()) {
             List<Parameter<?>> params = entry.getKey();
@@ -75,11 +74,25 @@ public class Command{
                 }
                 Context ctx = new Context(map);
                 Function<Context,String> executor = entry.getValue();
-                return executor.apply(ctx);
+                CompletableFuture<String> future = new CompletableFuture<>();
+                Runnable task = () -> {
+                    try {
+                        String result = executor.apply(ctx);
+                        future.complete(result);
+                    } catch (Exception e) {
+                        future.completeExceptionally(e);
+                    }
+                };
+                if (cmd.isDeamon()) {
+                    Launcher.getThreadPool().execute(task);
+                } else {
+                    Launcher.getThreadPool0().execute(task);
+                }
+                return future;
             }
 
         }
-        return("Invalid arguments for command: " + cmdName);
+        return CompletableFuture.completedFuture("Invalid arguments for command: " + cmdName);
     }
 
     public static List<String> splitCommand(String input) {

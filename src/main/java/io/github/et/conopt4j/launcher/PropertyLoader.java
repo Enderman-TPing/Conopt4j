@@ -26,6 +26,8 @@ import java.util.Properties;
  * conopt4j.logger.useDate = true
  * conopt4j.logger.maxHistory = 1024
  * conopt4j.command.prompt = >
+ * conopt4j.monitor.use = true
+ * conopt4j.status.interval = 500
  * conopt4j.logger.output = a.log
  * }
  * </pre>
@@ -49,7 +51,9 @@ public class PropertyLoader {
     private static boolean useTrace=true;
     private static int maxHistory=1024;
     private static String prompt = ">";
+    private static boolean useMonitor = true;
     private static String logOutPut=null;
+    private static long interval=500;
     private static final Properties properties = new Properties();
 
     public static Style getFormat() {
@@ -100,6 +104,8 @@ public class PropertyLoader {
 
     public static boolean isUseTrace() {return useTrace;}
 
+    public static boolean useMonitor() {return useMonitor;}
+
     public static void loadProperties(InputStream in){
         try{
             properties.load(in);
@@ -131,6 +137,8 @@ public class PropertyLoader {
             prompt = properties.getProperty("conopt4j.command.prompt");
             useDate=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useDate"));
             useTrace=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useTrace"));
+            useMonitor=Boolean.parseBoolean(properties.getProperty("conopt4j.monitor.use"));
+            interval=Long.parseLong(properties.getProperty("conopt4j.status.interval"));
         }catch (Exception ignored){}
         if(maxHistory<=64){
             throw new IllegalArgumentException("comopt4j.logger.maxHistory must be at least 64");
@@ -150,4 +158,7 @@ public class PropertyLoader {
         };
     }
 
+    public static long getInterval() {
+        return interval;
+    }
 }
