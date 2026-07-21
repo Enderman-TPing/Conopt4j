@@ -123,7 +123,6 @@ public class Launcher {
                      while (true) {
                          synchronized (statusList) {
                              Monitor.getMonitor();
-                             status.update(Collections.emptyList());
                              status.update(statusList);
                          }
                          Thread.sleep(PropertyLoader.getInterval());
