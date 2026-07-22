@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.javamodularity.moduleplugin' version '1.8.12'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.beryx.jlink' version '2.25.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.20-Beta2'
+}
+
+group 'io.github.et'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.9.2'
+}
+
+tasks.withType(JavaExec){
+    jvmArgs=['-Dfile.encoding=utf-8',"-Dsun.stdout.encoding=utf-8","-Dsun.stderr.encoding=utf-8"]
+}
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainModule = 'io.github.et.reminder'
+    mainClass = 'io.github.et.reminder.MainApplication'
+}
+
+javafx {
+    version = '17.0.6'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {
+    implementation 'net.java.dev.jna:jna:5.14.0'
+    implementation 'net.java.dev.jna:jna-platform:5.14.0'
+    implementation ('org.apache.poi:poi-ooxml:5.1.0')
+    implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
+    implementation ('com.alibaba.fastjson2:fastjson2:2.0.47')
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+
+test {
+    useJUnitPlatform()}
+
+jlink {
+    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        name = 'app'
+    }
+}
+
+jlinkZip {
+    group = 'distribution'
+}
+
+kotlin {
+    jvmToolchain(17)
+}
