@@ -28,7 +28,7 @@ public class Launcher {
     public static Status status;
     public static Terminal TERMINAL;
     public static LineReader READER;
-    private static ExecutorService threadPool = Executors.newCachedThreadPool(new ThreadingFactory());
+    private static ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool(new ThreadingFactory());
     private static ThreadPoolExecutor threadPool0 = (ThreadPoolExecutor) Executors.newCachedThreadPool();
     private static Map<String, Command> commands = new HashMap<>();
 
@@ -64,8 +64,9 @@ public class Launcher {
         Err.initialize();
         threadPool0.setKeepAliveTime(1, TimeUnit.SECONDS);
         threadPool0.allowCoreThreadTimeOut(true);
+        threadPool.setKeepAliveTime(1, TimeUnit.SECONDS);
+        threadPool.allowCoreThreadTimeOut(true);
         status = new Status(TERMINAL);
-        Thread main=null;
         Thread thread = new Thread(() -> {
             while (true) {
                 String line = READER.readLine(PropertyLoader.getPrompt());
@@ -108,14 +109,9 @@ public class Launcher {
             }
 
         });
-        for(Thread a:Thread.getAllStackTraces().keySet()){
-            if(a.getName().equals("main")){
-                main=a;
-                break;
-            }
-        }
+
+        thread.setDaemon(true);
         thread.start();
-        Thread finalMain = main;
         Thread thread0;
         if(PropertyLoader.useMonitor()){
              thread0= new Thread(() -> {
@@ -134,19 +130,11 @@ public class Launcher {
             });
              thread0.setDaemon(true);
              thread0.start();
-        } else {
-            thread0 = null;
         }
         threadPool.execute(() -> {
             while(true) {
-                if((!thread.isAlive())||(!finalMain.isAlive())){
-                    finalMain.interrupt();
-                    if(!(thread0 ==null)){
-                        thread0.interrupt();
-                    }
-                    threadPool.shutdownNow();
-                    status.close();
-                    break;
+                if(!thread.isAlive()){
+                    System.exit(0);
                 }
             }
         });

@@ -24,7 +24,6 @@ import java.util.Date;
 @SuppressWarnings("unused")
 public class Logger {
     private static Level level = PropertyLoader.getLevel();
-    private static String format = PropertyLoader.getFormat().toString();
     private static String fileOutPut = PropertyLoader.getLogOutPut();
     private static SimpleDateFormat fmt = new SimpleDateFormat("MM-dd HH:mm:ss");
 
