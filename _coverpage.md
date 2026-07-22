@@ -2,6 +2,4 @@
 
 
 
-[GitHub](https://github.com/Enderman-TPing/Conopt4j)
-
-[Doc](https://Enderman-TPing.github.io/Conopt4j/)
+[Doc](./docs/What is Conopt4j.md)
