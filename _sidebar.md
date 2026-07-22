@@ -6,3 +6,5 @@
 
 ## Functions
 
+* [Logger](./docs/logger.md)
+* ​
