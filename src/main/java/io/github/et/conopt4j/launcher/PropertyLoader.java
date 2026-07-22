@@ -9,7 +9,7 @@ import java.util.Properties;
 
 /**
  * The structure of the configuration file should be like the example below:
- * <p>
+ *
  * <pre>
  * {@code
  * conopt4j.logger.level = Level.DEBUG
@@ -29,7 +29,6 @@ import java.util.Properties;
  * conopt4j.logger.output = a.log
  * }
  * </pre>
- * </p>
  *
  * The not provided ones will be regarded as default.
  *

@@ -16,7 +16,7 @@ import java.util.Date;
 
 
 /**
- * The class Logger is a class for logging as it literally shows. Only one Logger can be used in a certain project. If the Logger is used in different classes, you should call <h4>Logger.getDeclaredLogger</h4> to get the declared logger
+ * The class Logger is a class for logging as it literally shows. Only one Logger can be used in a certain project. If the Logger is used in different classes, you should call Logger.getDeclaredLogger to get the declared logger
  *
  * For more information, plz see the Javadoc on the functions
  * @author Enderman-Teleporting
