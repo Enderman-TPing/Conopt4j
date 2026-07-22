@@ -9,6 +9,43 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
+    <name>Conopt4j</name>
+    <description>Console output optimizer</description>
+    <url>https://github.com/Enderman-TPing/Conopt4j</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/Enderman-TPing/Conopt4j.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/Enderman-TPing/Conopt4j.git</developerConnection>
+        <url>https://github.com/Enderman-TPing/Conopt4j</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>enderman-tping</id>
+            <name>Yuheng Wang</name>
+            <email>enderman142857@outlook.com</email>
+            <roles>
+                <role>maintainer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>enderman-teleporting</id>
+            <name>Yuheng Wang</name>
+            <email>sherrikevin5143@gmail.com</email>
+            <roles>
+                <role>maintainer</role>
+            </roles>
+        </developer>
+    </developers>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -48,6 +85,10 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                            <additionalOptions>-Xdoclint:none</additionalOptions>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
