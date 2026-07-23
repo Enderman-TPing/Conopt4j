@@ -10,7 +10,7 @@ There are `info` `warn` `fatal` `fine` `severe` `error` and `debug`
 
 You can simply call `Logger.info(String log)` to write an INFO log to console
 
-> Before reading the contents below, please make sure that you have read [Launcher](./launcher.md)
+> Before reading the contents below, please make sure that you have read [Launcher](./docs/launcher.md)
 
 In the properties file mentioned in Launcher, there is the `level` part
 
@@ -64,7 +64,7 @@ If you want to output without the Logger format just as `System.out/err` origina
 
 ### File Output
 
-You may set this in the properties file mentioned in [Launcher](./launcher.md).
+You may set this in the properties file mentioned in [Launcher](./docs/launcher.md).
 
 ```properties
 conopt4j.logger.output =
@@ -76,7 +76,7 @@ You can also manually set path by calling `Logger.setFileOutPut(String fileOutPu
 
 ### Logger History
 
-Mainly used by a command (see [Command](./command.md))
+Mainly used by a command (see [Command](./docs/command.md))
 
 Determined by the `conopt4j.logger.maxHistory` config, which tells the max history logging output count that Conopt4j will record.
 

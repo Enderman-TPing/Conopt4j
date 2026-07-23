@@ -1,10 +1,10 @@
 # Monitor
 
-Monitor is a class that shows the current running status. When you set `conopt4j.monitor.use` to true in the property file mentioned in [Launcher](./Launcher.md), it will start automatically when `Launcher.init()` is called.
+Monitor is a class that shows the current running status. When you set `conopt4j.monitor.use` to true in the property file mentioned in [Launcher](./docs/Launcher.md), it will start automatically when `Launcher.init()` is called.
 
 The data in the Monitor <small>status</small> part will refresh at a certain frequency based on the `conopt4j.status.interval` setting
 
->  See [Launcher](./launcher.md)
+>  See [Launcher](./docs/launcher.md)
 
 Here is an example of what it is like:
 

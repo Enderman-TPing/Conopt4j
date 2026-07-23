@@ -33,23 +33,23 @@ conopt4j.command.prompt = >
 
   If this config is not found, the default value will be `Level.INFO`
 
-  > For more about Logger Levels, see [this](./logger.md)
+  > For more about Logger Levels, see [this](./docs/logger.md)
 
 * Configs from`conopt4j.logger.info` to `conopt4j.logger.fine` defines the Color that each logging level uses as its mark. Their value should be among `Color.RED` `Color.GREEN` `Color.YELLOW` `Color.BLUE` `Color.PURPLE` `Color.CYAN` and `Color.WHITE`
 
   Default value: `Color.WHITE`
 
-  > For more about Logger Colors, see [this](./logger.md)
+  > For more about Logger Colors, see [this](./docs/logger.md)
 
-*  `conopt4j.logger.useTrace ` `conopt4j.logger.output` and `conopt4j.logger.maxHistory`: see [this](./logger.md)
-
-  No default value; Should be provided
-
-* `conopt4j.monitor.use` decides whether to use the function [Monitor](./monitor.md)
+*  `conopt4j.logger.useTrace ` `conopt4j.logger.output` and `conopt4j.logger.maxHistory`: see [this](./docs/logger.md)
 
   No default value; Should be provided
 
-* `conopt4j.status.interval` determines the refresh interval for [Monitor](./monitor.md)
+* `conopt4j.monitor.use` decides whether to use the function [Monitor](./docs/monitor.md)
+
+  No default value; Should be provided
+
+* `conopt4j.status.interval` determines the refresh interval for [Monitor](./docs/monitor.md)
 
   No default value; Should be provided
 
@@ -57,7 +57,7 @@ conopt4j.command.prompt = >
 
   No default value; Should be provided
 
-  > For more about Input, see [this](./input.md)
+  > For more about Input, see [this](./docs/input.md)
 
 ### 2. Register Commands
 
@@ -65,4 +65,4 @@ Commands are not registered in the Command class - they are in Launcher
 
 Call `Launcher.registerCommand(Command cmd)` to register a command
 
-> For more about Commands, see [this](./commands.md)
+> For more about Commands, see [this](./docs/commands.md)
