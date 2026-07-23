@@ -24,6 +24,8 @@ public class Main {
         System.out.print("Hello ");
         System.err.println("World!");
         
+        Logger.warn("warning");
+        
         //if you have set useMonitor to true in *.properties, you may fine Monitor already running
         
         //try inputting `filter <some string that you want to search in output history>` or `help` or `help <certain function>` before you register a command
