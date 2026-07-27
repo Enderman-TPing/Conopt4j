@@ -57,6 +57,7 @@ public class Launcher {
 
     public static void init(InputStream in) throws IOException {
         PropertyLoader.loadProperties(in);
+        in.close();
         TERMINAL = TerminalBuilder.builder().system(true).build();
         READER = LineReaderBuilder.builder()
                 .terminal(TERMINAL)
