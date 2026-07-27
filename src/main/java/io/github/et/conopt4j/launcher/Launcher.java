@@ -8,7 +8,8 @@ import io.github.et.conopt4j.threading.command.Command;
 import io.github.et.conopt4j.threading.command.Context;
 import io.github.et.conopt4j.threading.command.Parameter;
 import io.github.et.conopt4j.threading.command.Type;
-import io.github.et.conopt4j.threading.monitor.Monitor;
+import io.github.et.conopt4j.threading.status.Monitor;
+import io.github.et.conopt4j.threading.status.ProgressBar;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
@@ -64,8 +65,10 @@ public class Launcher {
         Err.initialize();
         threadPool0.setKeepAliveTime(1, TimeUnit.SECONDS);
         threadPool0.allowCoreThreadTimeOut(true);
+        threadPool0.setMaximumPoolSize(200);
         threadPool.setKeepAliveTime(1, TimeUnit.SECONDS);
         threadPool.allowCoreThreadTimeOut(true);
+        threadPool.setMaximumPoolSize(200);
         status = new Status(TERMINAL);
         Thread thread = new Thread(() -> {
             while (true) {
@@ -93,7 +96,7 @@ public class Launcher {
                         }
                         Context ctx = new Context(map);
                         Function<Context, String> executor = entry.getValue();
-                        if (cmd.isDeamon()) {
+                        if (cmd.isDaemon()) {
                             Launcher.getThreadPool().execute(() -> Logger.warn(executor.apply(ctx)));
                         } else {
                             Launcher.getThreadPool0().execute(() -> Logger.warn(executor.apply(ctx)));
@@ -119,7 +122,7 @@ public class Launcher {
                      while (true) {
                          synchronized (statusList) {
                              Monitor.getMonitor();
-                             status.update(statusList);
+                             ProgressBar.update();
                          }
                          Thread.sleep(PropertyLoader.getInterval());
                      }
@@ -141,7 +144,7 @@ public class Launcher {
         internalCommand:{
             /** Console-only command */
             Command filter=new Command("filter");
-            filter.setDeamon(true).setDescription("Filter history commands, console only")
+            filter.setDaemon(true).setDescription("Filter history commands, console only")
                   .addParameterNode(new Parameter<>("filter", Type.STRING))
                           .addExecution(cxt->{
                               String f=cxt.get("filter");
@@ -176,7 +179,7 @@ public class Launcher {
                           }).build();
             registerCommand(filter);
             Command help=new Command("help");
-            help.setDeamon(true).setDescription("Show help")
+            help.setDaemon(true).setDescription("Show help")
                     .addParameterNode()
                         .addExecution(context -> buildHelp())
                     .addParameterNode(new Parameter<>("commandName", Type.STRING))
@@ -383,5 +386,23 @@ public class Launcher {
     }
     private static boolean isEnglishLetter(char c) {
         return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+    }
+    public static void shutdownAllThreadPoolsForcibly(){
+        threadPool.shutdownNow();
+        threadPool0.shutdownNow();
+    }
+    public static void shutdownAllThreadPools(long timeout, TimeUnit unit){
+        threadPool.shutdown();
+        threadPool0.shutdown();
+        try{
+            if(!threadPool0.awaitTermination(timeout,unit)){
+                threadPool0.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            threadPool0.shutdownNow();
+            Thread.currentThread().interrupt();
+        } finally{
+            threadPool.shutdownNow();
+        }
     }
 }

@@ -186,7 +186,12 @@ public class Logger {
 
     private static void log(String content, Color color, String logLevel, Object... f) {
         synchronized (Launcher.getStatusList()) {
-            String content0 = String.format(content, f);
+            String content0;
+            if(f.length==0){
+                content0 = content;
+            }else{
+                content0=String.format(content,f);
+            }
             String[] contents = content0.contains("\n") ? (content0.split("\n")) : new String[]{content0};
             if (Out.buffer.equals("")) {
                 Date date = new Date();

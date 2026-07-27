@@ -63,7 +63,7 @@ public class Main {
         
         //register command
         Command command =new Command("a");
-        command.setDeamon(true)
+        command.setDaemon(true)
                 .addParameterNode(new Parameter<>("String", Type.STRING))
                     .addExecution(ext-> ext.get("String"))
                 .build();

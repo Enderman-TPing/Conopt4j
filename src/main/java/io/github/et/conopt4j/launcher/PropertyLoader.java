@@ -20,6 +20,7 @@ import java.util.Properties;
  * conopt4j.logger.fatal = Color.PURPLE
  * conopt4j.logger.severe = Color.RED
  * conopt4j.logger.fine = Color.BLUE
+ * conopt4j.logger.useTime = true
  * conopt4j.logger.useTrace = true
  * conopt4j.logger.useDate = true
  * conopt4j.logger.maxHistory = 1024
@@ -43,7 +44,7 @@ public class PropertyLoader {
     private static Color fatal=Color.WHITE;
     private static Color severe=Color.WHITE;
     private static Color fine=Color.WHITE;
-    private static boolean useDate=true;
+    private static boolean useDate=false;
     private static boolean useTrace=true;
     private static int maxHistory=1024;
     private static String prompt = ">";
@@ -124,8 +125,9 @@ public class PropertyLoader {
 
         tmp=properties.getProperty("conopt4j.logger.output","");
         logOutPut= tmp.isEmpty() ?null:tmp;
+        useDate=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useDate","false"));
         try {
-            maxHistory = Integer.parseInt(properties.getProperty("conopt4j.logger.maxHistory"));
+            maxHistory = Integer.parseInt(properties.getProperty("conopt4j.logger.maxHistory","1024"));
             prompt = properties.getProperty("conopt4j.command.prompt");
             useDate=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useDate"));
             useTrace=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useTrace"));

@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 public class Command{
     private String name;
-    private boolean deamon=false;
+    private boolean daemon=false;
     private ConcurrentHashMap<List<Parameter<?>>, Function<Context,String>> parameterNodeSet = new ConcurrentHashMap<>();
     private List temp1=null;
     private String description;
@@ -36,11 +36,11 @@ public class Command{
     public String getName(){
         return name;
     }
-    public boolean isDeamon(){
-        return this.deamon;
+    public boolean isDaemon(){
+        return this.daemon;
     }
-    public Command setDeamon(boolean deamon){
-        this.deamon=deamon;
+    public Command setDaemon(boolean daemon){
+        this.daemon=daemon;
         return this;
     }
     public Command addParameterNode(Parameter... parameters) {
@@ -83,7 +83,7 @@ public class Command{
                         future.completeExceptionally(e);
                     }
                 };
-                if (cmd.isDeamon()) {
+                if (cmd.isDaemon()) {
                     Launcher.getThreadPool().execute(task);
                 } else {
                     Launcher.getThreadPool0().execute(task);
