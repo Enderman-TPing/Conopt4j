@@ -41,21 +41,21 @@ conopt4j.command.prompt = >
 
   > For more about Logger Colors, see [this](./docs/logger.md)
 
-*  `conopt4j.logger.useTrace ` `conopt4j.logger.output` and `conopt4j.logger.maxHistory`: see [this](./docs/logger.md)
+*  `conopt4j.logger.useTrace ` `conopt4j.logger.useDate` `conopt4j.logger.output` and `conopt4j.logger.maxHistory`: see [this](./docs/logger.md)
 
-  No default value; Should be provided
+  Respectively, their default values are:`true` `false` `null` `1024`
 
 * `conopt4j.monitor.use` decides whether to use the function [Monitor](./docs/monitor.md)
 
-  No default value; Should be provided
+  Default value: `true`
 
 * `conopt4j.status.interval` determines the refresh interval for [Monitor](./docs/monitor.md)
 
-  No default value; Should be provided
+  Default value: `500`
 
 * `conopt4j.command.prompt` stands for the prompt of the Input Line
 
-  No default value; Should be provided
+  Default value: `>`
 
   > For more about Input, see [this](./docs/input.md)
 
@@ -66,3 +66,9 @@ Commands are not registered in the Command class - they are in Launcher
 Call `Launcher.registerCommand(Command cmd)` to register a command
 
 > For more about Commands, see [this](./docs/commands.md)
+
+
+
+
+
+> Please note that methods in [Logger](./docs/logger.md) and Launcher are all static methods. I don't think it is convenient and concise for you to run your application with different kinds of Loggers and multiple [Monitor](./docs/monitor.md)s on the screen. However, if you do think it is a necessary function to make Logger and Launcher not static, please share your opinion in `Issues`.

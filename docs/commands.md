@@ -1,10 +1,22 @@
 # Commands
 
+### Logic
+
+See `Register a command` part below.
+
+By building such a command, you assign every command certain parameter sets, and each parameter set is assigned certain operation.
+
+Different executions are assigned to different thread pools depending on what you set with `setDaemon()`. `setDaemon(true)` will be assigned to a `CachedThreadPool` with a maximum thread value of 200 and contains of only daemon threads. `setDaemon(false)` will be assigned to a `CachedThreadPool` with a maximum thread value of 200 and keep alive time of 1 second.
+
+All command parameters are defined with its Type and parameters in command strings are transformed into its matching Type.
+
+To shutdown the thread pools, you can call `Launcher.shutdownAllThreadPoolsForcibly()` to forcibly shutdown the two thread pools. You may also call `Launcher.shutdownAllThreadPools(long timeout, TimeUnit unit)` to gracefully shutdown the thread pools with the given timeout value
+
 ### Input Bar
 
 After calling `Launcher.init()` , a line that is specifically for input will be created. The prompt specified in the properties file mentioned in the [Launcher part](./docs/launcher.md) will be displayed at the beginning of the line. 
 
-Different from `System.Console.readLine(String prompt)`, you will not be disturbed when inputting with other log outputting.
+Different from `System.Console.readLine(String prompt)`, you will not be disturbed when inputting with other log output.
 
 ### Register a command
 
@@ -30,9 +42,11 @@ printAAA.setDescription("Print the String that comes after AAA")
     //Here, you can still add more ".addParamaterNode()" and ".addExecution()" to adapt to more input occasions
     // Take notice that all ".addParameterNode()"'s must be followed by an ".addExecution()", even if there is no parameter.
     //If there is no parameter, then directly call .addParameterNode() without any parameters
-    .build();
+    .build();//build() is only a mark that serves no use. can be omitted.
 Launcher.registerCommand(printAAA)
 ```
+
+If your given execution may raise an exception, please deal with it by yourself. There is no default exception handler so that you can define your return value yourself.
 
 #### How to Use the Command
 
@@ -45,6 +59,14 @@ Example (with the registered command shown in the `Register a command` part):
 ```java
 Command.runCommand("printAAA aaa").thenAccept(System.out::println);
 ```
+
+The result should be:
+
+```text
+aaa
+```
+
+
 
 ### Internal Commands
 
@@ -74,3 +96,8 @@ With no parameters, it will give off all command name+descriptions
 
 With parameter, it will give off all command usage under this name
 
+### Tip
+
+For occasions when a space appears in a String-typed parameter, you should quote the parameter with `""`. If quotation marks should be included in a String-types parameter, it should go with a slash: `\"`
+
+However if spaces appear in the last parameter of the command, quotation marks can be omitted.

@@ -17,6 +17,20 @@ public class Main {
     public static void main(String[] args) throws IOException {
         //initialize with a *.properties file
         Launcher.init(Main.class.getResourceAsStream("/io/github/et/resource.properties"));
+        //Progress bar
+        new Thread(()-> {
+            ProgressBar pb = new ProgressBar();//Initialize progress bar
+            pb.setPrefix("Loading");
+            pb.setProgress(0);
+            pb.setSuffix("0%");
+            pb.show();
+            int progress=0;
+            while(progress<=100){
+                pb.setSuffix(progress+"%")
+                pb.setProgress(progress++);
+                ProgressBar.update();
+            }
+        }).start();
         
         //try to see if System.out and System.err has been set to logger output
         System.out.println("Hello World!");
@@ -33,7 +47,7 @@ public class Main {
         
         //register command
         Command command =new Command("a");
-        command.setDeamon(true)
+        command.setDaemon(true)
                 .addParameterNode(new Parameter<>("String", Type.STRING))
                     .addExecution(ext-> ext.get("String"))
                 .build();
