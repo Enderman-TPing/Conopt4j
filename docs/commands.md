@@ -26,7 +26,7 @@ I will explain with an example:
 Command printAAA = new Command("printAAA");
 //Define the command and its name (the first word of a command)
 printAAA.setDescription("Print the String that comes after AAA")
-    .setDeamon(true)//if you hope it will be run on a deamon thread
+    .setDaemon(true)//if you hope it will be running on a daemon thread
     .addParameterNode(new Parameter<>("String",Type.STRING))
     //public Console addParameterNode(Parameter...parameters)
     //You may add as many parameters as you like
