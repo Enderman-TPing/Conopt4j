@@ -1,6 +1,6 @@
 # Monitor
 
-> This function will not take effect as a friendly fallback when your application is running in a non-interactive environment (like a CI server or with redirected input/output)
+> This function will not take effect as a friendly fallback when your application is running in a non-interactive environment (like a CI server or with redirected input/output). Do not shift the terminal window size while the function is running in an interactive environment.
 
 Monitor is a class that shows the current running status. When you set `conopt4j.monitor.use` to true in the property file mentioned in [Launcher](./docs/Launcher.md), it will start automatically when `Launcher.init()` is called.
 

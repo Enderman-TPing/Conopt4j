@@ -12,3 +12,4 @@ Functions
 * [Logger](./docs/logger.md)
 * [Monitor](./docs/monitor.md)
 * [Commands](./docs/commands.md)
+* [Progress Bar](./docs/progressBar.md)
