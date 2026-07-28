@@ -21,14 +21,8 @@ public class Monitor {
         long max = runtime.maxMemory();
         long free = runtime.freeMemory();
         long used = max - free;
-        if (Launcher.getStatusList().isEmpty()) {
-            Launcher.getStatusList().add(new AttributedString(Space.getSpace() + "System Arch: " + sArch + " | Name: " + sName + " | Version: " + sVersion + " | Available Processors: " + availableProcessors));
-            Launcher.getStatusList().add(new AttributedString(Space.getSpace() + "Thread Count: " + tc + " | Daemon Count: " + daemon + " | System Load: " + systemLoad));
-            Launcher.getStatusList().add(new AttributedString(Space.getSpace() + "Total Memory: " + total + " | Max: " + max + " | Free:" + free + " | used " + used));
-        } else {
-            Launcher.getStatusList().set(0, new AttributedString(Space.getSpace()+"System Arch: " + sArch + " | Name: " + sName + " | Version: " + sVersion + " | Available Processors: " + availableProcessors));
-            Launcher.getStatusList().set(1, new AttributedString(Space.getSpace()+"Thread Count: " + tc + " | Daemon Count: " + daemon + " | System Load: " + systemLoad));
-            Launcher.getStatusList().set(2, new AttributedString(Space.getSpace()+"Total Memory: " + total + " | Max: " + max + " | Free:" + free + " | used " + used));
-        }
+        Launcher.getStatusList().add(new AttributedString(Space.getSpace() + "System Arch: " + sArch + " | Name: " + sName + " | Version: " + sVersion + " | Available Processors: " + availableProcessors));
+        Launcher.getStatusList().add(new AttributedString(Space.getSpace() + "Thread Count: " + tc + " | Daemon Count: " + daemon + " | System Load: " + systemLoad));
+        Launcher.getStatusList().add(new AttributedString(Space.getSpace() + "Total Memory: " + total + " | Max: " + max + " | Free:" + free + " | used " + used));
     }
 }
