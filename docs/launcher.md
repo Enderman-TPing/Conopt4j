@@ -45,6 +45,8 @@ conopt4j.command.prompt = >
 
   Respectively, their default values are:`true` `false` `null` `1024`
 
+  For `conopt4j.logger.maxHistory`, the minimum value is 64
+
 * `conopt4j.monitor.use` decides whether to use the function [Monitor](./docs/monitor.md)
 
   Default value: `true`
