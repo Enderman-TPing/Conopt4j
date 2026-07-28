@@ -50,7 +50,7 @@ public class PropertyLoader {
     private static String prompt = ">";
     private static boolean useMonitor = true;
     private static String logOutPut=null;
-    private static long interval=500;
+    private static long interval=1024;
     private static final Properties properties = new Properties();
     
 
