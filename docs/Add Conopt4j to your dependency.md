@@ -6,14 +6,14 @@ Maven
 <dependency>
     <groupId>io.github.enderman-tping</groupId>
     <artifactId>Conopt4j</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
 Gradle
 
 ```groovy
-implementation("io.github.enderman-tping:Conopt4j:1.0.0")
+implementation("io.github.enderman-tping:Conopt4j:1.0.2")
 ```
 
 For more information, please see [this](https://central.sonatype.com/artifact/io.github.enderman-tping/Conopt4j)
