@@ -128,11 +128,11 @@ public class PropertyLoader {
         useDate=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useDate","false"));
         try {
             maxHistory = Integer.parseInt(properties.getProperty("conopt4j.logger.maxHistory","1024"));
-            prompt = properties.getProperty("conopt4j.command.prompt");
-            useDate=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useDate"));
-            useTrace=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useTrace"));
-            useMonitor=Boolean.parseBoolean(properties.getProperty("conopt4j.monitor.use"));
-            interval=Long.parseLong(properties.getProperty("conopt4j.status.interval"));
+            prompt = properties.getProperty("conopt4j.command.prompt",">");
+            useDate=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useDate","false"));
+            useTrace=Boolean.parseBoolean(properties.getProperty("conopt4j.logger.useTrace","true"));
+            useMonitor=Boolean.parseBoolean(properties.getProperty("conopt4j.monitor.use","true"));
+            interval=Long.parseLong(properties.getProperty("conopt4j.status.interval","1024"));
         }catch (Exception ignored){}
         if(maxHistory<=64){
             throw new IllegalArgumentException("comopt4j.logger.maxHistory must be at least 64");
