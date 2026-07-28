@@ -10,8 +10,10 @@ import io.github.et.conopt4j.threading.command.Parameter;
 import io.github.et.conopt4j.threading.command.Type;
 import io.github.et.conopt4j.threading.status.Monitor;
 import io.github.et.conopt4j.threading.status.ProgressBar;
+import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedString;
@@ -72,44 +74,48 @@ public class Launcher {
         threadPool.setMaximumPoolSize(200);
         status = new Status(TERMINAL);
         Thread thread = new Thread(() -> {
-            while (true) {
-                String line = READER.readLine(PropertyLoader.getPrompt());
-                if (line == null || line.trim().isEmpty()) continue;
+            try {
+                while (true) {
+                    String line = READER.readLine(PropertyLoader.getPrompt());
+                    if (line == null || line.trim().isEmpty()) continue;
 
-                List<String> rawTokens = splitCommand(line);
-                if (rawTokens.isEmpty()) continue;
+                    List<String> rawTokens = splitCommand(line);
+                    if (rawTokens.isEmpty()) continue;
 
-                String cmdName = rawTokens.get(0);
-                List<String> argsTokens = rawTokens.subList(1, rawTokens.size());
-                Command cmd = commands.get(cmdName);
-                if (cmd == null) {
-                    System.err.println("Unknown command: " + cmdName);
-                    continue;
-                }
-                boolean executed = false;
-                for (Map.Entry<List<Parameter<?>>, Function<Context, String>> entry : cmd.getParameterNodeSet().entrySet()) {
-                    List<Parameter<?>> params = entry.getKey();
-                    List<Object> parsedValues = tryParse(params, argsTokens);
-                    if (parsedValues != null) {
-                        ConcurrentHashMap<Parameter<?>, Object> map = new ConcurrentHashMap<>();
-                        for (int i = 0; i < params.size(); i++) {
-                            map.put(params.get(i), parsedValues.get(i));
+                    String cmdName = rawTokens.get(0);
+                    List<String> argsTokens = rawTokens.subList(1, rawTokens.size());
+                    Command cmd = commands.get(cmdName);
+                    if (cmd == null) {
+                        System.err.println("Unknown command: " + cmdName);
+                        continue;
+                    }
+                    boolean executed = false;
+                    for (Map.Entry<List<Parameter<?>>, Function<Context, String>> entry : cmd.getParameterNodeSet().entrySet()) {
+                        List<Parameter<?>> params = entry.getKey();
+                        List<Object> parsedValues = tryParse(params, argsTokens);
+                        if (parsedValues != null) {
+                            ConcurrentHashMap<Parameter<?>, Object> map = new ConcurrentHashMap<>();
+                            for (int i = 0; i < params.size(); i++) {
+                                map.put(params.get(i), parsedValues.get(i));
+                            }
+                            Context ctx = new Context(map);
+                            Function<Context, String> executor = entry.getValue();
+                            if (cmd.isDaemon()) {
+                                Launcher.getThreadPool().execute(() -> Logger.warn(executor.apply(ctx)));
+                            } else {
+                                Launcher.getThreadPool0().execute(() -> Logger.warn(executor.apply(ctx)));
+                            }
+                            executed = true;
+                            break;
                         }
-                        Context ctx = new Context(map);
-                        Function<Context, String> executor = entry.getValue();
-                        if (cmd.isDaemon()) {
-                            Launcher.getThreadPool().execute(() -> Logger.warn(executor.apply(ctx)));
-                        } else {
-                            Launcher.getThreadPool0().execute(() -> Logger.warn(executor.apply(ctx)));
-                        }
-                        executed = true;
-                        break;
+                    }
+
+                    if (!executed) {
+                        System.err.println("Invalid arguments for command: " + cmdName);
                     }
                 }
-
-                if (!executed) {
-                    System.err.println("Invalid arguments for command: " + cmdName);
-                }
+            }catch (UserInterruptException| EndOfFileException e){
+                System.exit(0);
             }
 
         });
@@ -135,13 +141,6 @@ public class Launcher {
              thread0.setDaemon(true);
              thread0.start();
         }
-        threadPool.execute(() -> {
-            while(true) {
-                if(!thread.isAlive()){
-                    System.exit(0);
-                }
-            }
-        });
         internalCommand:{
             /** Console-only command */
             Command filter=new Command("filter");

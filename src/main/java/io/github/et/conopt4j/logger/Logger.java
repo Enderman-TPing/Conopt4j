@@ -24,7 +24,7 @@ import java.util.Date;
 @SuppressWarnings("unused")
 public class Logger {
     private static Level level = PropertyLoader.getLevel();
-    private static String fileOutPut = PropertyLoader.getLogOutPut();
+    private static String fileOutput = PropertyLoader.getLogOutPut();
     private static SimpleDateFormat fmt = new SimpleDateFormat("MM-dd HH:mm:ss");
 
     private static Color info = PropertyLoader.getInfo();
@@ -220,7 +220,7 @@ public class Logger {
                     logHistory.add(sb.toString());
                     Launcher.READER.printAbove(sb.toAttributedString());
                 }
-                if (fileOutPut != null) {
+                if (fileOutput != null) {
                     writeToFile(all.toString());
                 }
             } else {
@@ -239,10 +239,10 @@ public class Logger {
 
 
     private static void writeToFile(String content) {
-        File file = new File(fileOutPut);
+        File file = new File(fileOutput);
         try {
             if (!file.exists() && !file.createNewFile()) {
-                throw new IOException("Failed to create file: " + fileOutPut);
+                throw new IOException("Failed to create file: " + fileOutput);
             }
             FileOutputStream fos = new FileOutputStream(file, true);
             fos.write(content.getBytes());
@@ -266,7 +266,7 @@ public class Logger {
 
     @Override
     public String toString() {
-        return level.toString() + "\t" + fileOutPut;
+        return level.toString() + "\t" + fileOutput;
     }
 
     private static ArrayList<String> logHistory = new ArrayList<String>();
@@ -275,8 +275,8 @@ public class Logger {
         return logHistory;
     }
 
-    public static void setFileOutPut(String fileOutPut) {
-        Logger.fileOutPut = fileOutPut;
+    public static void setFileOutput(String fileOutput) {
+        Logger.fileOutput = fileOutput;
     }
 
 }
