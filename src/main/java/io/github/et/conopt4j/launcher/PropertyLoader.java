@@ -110,7 +110,7 @@ public class PropertyLoader {
         String tmp=properties.getProperty("conopt4j.logger.level","Level.INFO");
         if(tmp.equals("Level.DEBUG")){
             level=Level.DEBUG;
-        } else if (tmp.equals("Levels.FINE")) {
+        } else if (tmp.equals("Level.FINE")) {
             level=Level.FINE;
         } else{
             level=Level.INFO;
